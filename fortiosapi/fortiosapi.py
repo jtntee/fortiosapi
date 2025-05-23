@@ -163,7 +163,7 @@ class FortiOSAPI:
         # Retrieve server csrf and update session's headers
         LOG.debug("cookies are  : %s ", self._session.cookies)
         for cookie in self._session.cookies:
-            if cookie.name == 'ccsrftoken':
+            if cookie.name.startswith("ccsrftoken"):
                 csrftoken = cookie.value[1:-1]  # token stored as a list
                 LOG.debug("csrftoken before update  : %s ", csrftoken)
                 self._session.headers.update({'X-CSRFTOKEN': csrftoken})
@@ -460,7 +460,7 @@ class FortiOSAPI:
             url = self.cmdb_url(path, name, vdom=vdom) + "&action=schema"
 
         res = self._session.get(url, timeout=self.timeout)
-        if res.status_code is 200:
+        if res.status_code == 200:
             if vdom == "global":
                 return json.loads(res.content.decode('utf-8'))[0]['results']
             else:
